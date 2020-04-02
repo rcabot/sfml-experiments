@@ -1,11 +1,7 @@
 class Character :  public sf::Drawable, public sf::Transformable{
 
-    sf::VertexArray m_vertices;
-    sf::Texture m_tileset;
-	int x=0;
-	int y=0;
 public:
-	bool load(const std::string& tileset, sf::Vector2u tileSize, int tileNumber)
+	bool load(const std::string& tileset, sf::Vector2u tileSize,sf::Vector2u tileScale, int tileNumber)
     {
         // load the tileset texture
         if (!m_tileset.loadFromFile(tileset))
@@ -20,13 +16,13 @@ public:
 		int tv = tileNumber / (m_tileset.getSize().x / tileSize.x);
 
 		// get a pointer to the current tile's quad
-		sf::Vertex* quad = &m_vertices[4];
+		sf::Vertex* quad = &m_vertices[0];
 
 		// define its 4 corners
-		quad[0].position = sf::Vector2f(x, y);
-		quad[1].position = sf::Vector2f(x+tileSize.x, y+ tileSize.y);
-		quad[2].position = sf::Vector2f(x+ tileSize.x,y + tileSize.y);
-		quad[3].position = sf::Vector2f(x+ tileSize.x, y+ tileSize.y);
+		quad[0].position = sf::Vector2f(0, 0);
+		quad[1].position = sf::Vector2f(tileSize.x*tileScale.x, 0);
+		quad[2].position = sf::Vector2f(tileSize.x*tileScale.x, tileSize.y*tileScale.y);
+		quad[3].position = sf::Vector2f(0,tileSize.y*tileScale.y);
 
 		// define its 4 texture coordinates
 		quad[0].texCoords = sf::Vector2f(tu * tileSize.x, tv * tileSize.y);
@@ -35,6 +31,33 @@ public:
 		quad[3].texCoords = sf::Vector2f(tu * tileSize.x, (tv + 1) * tileSize.y);
 
         return true;
+    }
+
+    void updateposition()
+    {
+        float x = 0.0f;
+        float y = 0.0f;
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+        {
+            x -= 1.0f;
+        }
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+        {
+            x += 1.0f;
+        }
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+        {
+            y -= 1.0f;
+        }
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+        {
+            y += 1.0f;
+        }
+        if(x==0.0f&&y==0.0f) return;
+        float mag = sqrt(x*x + y*y);
+        x/=mag;
+        y/=mag;
+        move(x,y);
     }
 
 private:
@@ -50,4 +73,7 @@ private:
         // draw the vertex array
         target.draw(m_vertices, states);
     }
+
+    sf::VertexArray m_vertices;
+    sf::Texture m_tileset;
 };

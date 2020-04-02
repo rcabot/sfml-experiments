@@ -11,7 +11,7 @@ int main()
 	// in Windows at least, this must be called before creating the window
 	float screenScalingFactor = platform.getScreenScalingFactor(window.getSystemHandle());
 	// Use the screenScalingFactor
-	window.create(sf::VideoMode(200.0f * screenScalingFactor, 200.0f * screenScalingFactor),
+	window.create(sf::VideoMode(400.0f * screenScalingFactor, 400.0f * screenScalingFactor),
 		"Rachel's very special game!");
     window.setFramerateLimit(FPS);
 
@@ -32,15 +32,18 @@ int main()
 
     // create the tilemap from the level definition
     TileMap map;
-    if (!map.load("content/colored_tilemap_packed.png", sf::Vector2u(16, 16), level, 16, 8))
+    if (!map.load("content/colored_tilemap_packed.png", sf::Vector2u(8, 8),sf::Vector2u(4, 4), level, 16, 8))
 	{
 		return -1;
 	}
 
     Character character;
-	character.load("content/colored_tilemap_packed.png", sf::Vector2u(16, 16),16);
-    character.setOrigin(10.0f, 10.0f);
-    character.setPosition(0, 150.0f);
+	if(!character.load("content/colored_tilemap_packed.png", sf::Vector2u(8, 8),sf::Vector2u(4, 4),7))
+	{
+		return -1;
+	}
+    //character.setOrigin(10.0f, 10.0f);
+    //character.setPosition(0, 150.0f);
 
 	sf::Event event;
 	while (window.isOpen())
@@ -55,10 +58,10 @@ int main()
 			window.close();
 		}
 
-		character.move(1.0f,0.0f);
-
+		character.updateposition();
+		//character.move(1,0);
 		window.clear();
-		//window.draw(map);
+		window.draw(map);
 		window.draw(character);
 		window.display();
 	}
